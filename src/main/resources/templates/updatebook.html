@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+    <h2>Update Book Details</h2>
+
+    <form id="updateBookForm">
+
+        <input type="hidden" id="bookId">
+
+        <label>Book Name:</label>
+        <input type="text" id="bookname" required>
+        <br><br>
+
+        <label>Author:</label>
+        <input type="text" id="author" required>
+        <br><br>
+
+        <button type="submit">Update Book</button>
+
+    </form>
+
+    <p id="message"></p>
+
+
+
+    <script>
+
+        var api = "/api/books";
+
+        // Get book ID from URL
+        var path = window.location.pathname;
+        var id = path.substring(path.lastIndexOf("/") + 1);
+
+        // Fetch existing book details
+        fetch(api + "/" + id)
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error("Book not found");
+            }
+            return response.json();
+        })
+        .then(function(book) {
+            document.getElementById("bookId").value = book.id;
+            document.getElementById("bookname").value = book.bookname;
+            document.getElementById("author").value = book.author;
+        })
+        .catch(function(error) {
+            document.getElementById("message").innerText = error.message;
+        });
+
+        // Update book
+        document.getElementById("updateBookForm").addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            var book = {
+                bookname: document.getElementById("bookname").value,
+                author: document.getElementById("author").value
+            };
+
+            fetch(api + "/" + id, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(book)
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error("Book update failed");
+                }
+                return response.text();
+            })
+            .then(function(data) {
+                document.getElementById("message").innerText = "Book updated successfully!";
+            })
+            .catch(function(error) {
+                document.getElementById("message").innerText = error.message;
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>

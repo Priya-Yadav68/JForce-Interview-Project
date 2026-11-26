@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Add Book - Library Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+            margin: 0;
+        }
+
+        header {
+            background: #263b5e;
+            color: white;
+            padding: 20px 40px;
+        }
+
+        .container {
+            width: 400px;
+            margin: 60px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #263b5e;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px;
+            margin-bottom: 18px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #263b5e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #1b2d49;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #263b5e;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2>Library Management System</h2>
+</header>
+
+<div class="container">
+
+    <h2 id="formTitle">Add New Book</h2>
+
+    <form id="bookForm">
+
+        <input type="hidden" id="bookId">
+
+        <label>Book Name</label>
+        <input type="text" id="bookname"
+               placeholder="Enter book name" required>
+
+        <label>Author Name</label>
+        <input type="text" id="author"
+               placeholder="Enter author name" required>
+
+        <button type="submit" id="submitBtn">Add Book</button>
+
+    </form>
+
+    <p id="message"></p>
+
+    <a href="/dashboard" class="back">Back to Dashboard</a>
+
+</div>
+
+<script>
+
+    document.getElementById("bookForm").addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        var book = {
+            bookname: document.getElementById("bookname").value,
+            author: document.getElementById("author").value
+        };
+
+        fetch("/api/books", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(book)
+        })
+
+        .then(function(response) {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error("Book not saved. Status: " + response.status);
+            }
+        })
+
+        .then(function(data) {
+            document.getElementById("message").innerText = "Book Added Successfully!";
+            document.getElementById("bookForm").reset();
+        })
+
+        .catch(function(error) {
+            document.getElementById("message").innerText = error.message;
+        });
+
+    });
+
+</script>
+
+</body>
+</html>
